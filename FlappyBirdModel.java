@@ -3,6 +3,10 @@ public class FlappyBirdModel {
   private int ticks;
   private int ymotion;
 
+  // this needs to be sorted, perhaps when its initialized
+  int W = 800;
+  int H = 700;
+
   public int gravity(int birdCenter) {
     this.ticks++;
     if(this.ticks % 2 == 0 && this.ymotion < 15){
@@ -21,5 +25,11 @@ public class FlappyBirdModel {
     return this.ymotion;
   }
 
+  public boolean collision(int y) {
+    if(y > H - 120 || y < 0) {
+      return true;
+    }
+    return false;
+  }
 
 }

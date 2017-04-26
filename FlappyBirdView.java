@@ -1,3 +1,6 @@
+//TO DO:
+  // Add the column collision. Make sure its in the Model Class somehow.
+
 import java.util.ArrayList;
 import javafx.animation.*;
 import javafx.application.Application;
@@ -24,72 +27,63 @@ public class FlappyBirdView extends Application  {
   int W = 800;
   int H = 700;
   Scene scene;
-  Group root;
-  Ellipse bird, bird2;
+  Group root = new Group();
+  Ellipse bird = new Ellipse();
   int ymotion, ticks;
   Timeline tim = new Timeline();
   IntegerStringConverter str;
   int X, Y;
   ArrayList<Rectangle> columns;
+  Columns columnsObject = new Columns(H, W);
   boolean gameOver = false;
   Button btn;
   FlappyBirdModel model = new FlappyBirdModel();
-
-
+  Stage primaryStage = new Stage();
+  Bird birdObject = new Bird(H, W);
+  Ground groundObject = new Ground(H, W);
+  Rectangle ground;
 
   @Override
   public void start (Stage stage){
-
-    stage.setTitle("Flappy Bird");
-    stage.setHeight(H);
-    stage.setWidth(W);
-    // I don't want the user to resize the window. Window is has set dimension
-    stage.setResizable(false);
+    primaryStage = stage;
+    setupStage();
 
     // str = new IntegerStringConverter();
 
-    root = new Group();
+    root.getChildren().addAll(columns = columnsObject.getColums());
+    root.getChildren().add(ground = groundObject.getGround());
+    root.getChildren().addAll(bird = birdObject.getBird());
 
-    bird = new Ellipse();
-    // fill this ellipse with the initialized image
-    bird.setFill(Color.DARKGREEN);
-    bird.setRadiusX(20);
-    bird.setRadiusY(20);
-    bird.setCenterX(W / 2 - 10);
-    bird.setCenterY(H / 2 - 10);
-
-    root.getChildren().addAll(bird);
     scene = new Scene(root);
+    primaryStage.setScene(scene);
+    primaryStage.show();
 
+    launchTimer();
 
+    }
 
-    // columns = new ArrayList<Rectangle>();
-    // int i = 0;
-    // while(i < 20) {
-    //   addColumn();
-    //   i++;
-    // }
-    // root.getChildren().addAll(columns);
+    public void setupStage() {
+      primaryStage.setTitle("Flappy Bird");
+      primaryStage.setHeight(H);
+      primaryStage.setWidth(W);
+      // I don't want the user to resize the window. Window is has set dimension
+      primaryStage.setResizable(false);
+    }
 
-    stage.setScene(scene);
-    stage.show();
-
-
+  private void launchTimer() {
     tim.setCycleCount(Animation.INDEFINITE);
     KeyFrame kf = new KeyFrame(Duration.millis(20), this::listen);
     tim.getKeyFrames().add(kf);
     tim.play();
-
-
-
   }
 
-private void listen(ActionEvent e) {
-//
-//   if(bird.getCenterY() > H - 120 || bird.getCenterY() < 0) {
-//     tim.stop();
-//     gameOver = true;
-//   }
+  private void listen(ActionEvent e) {
+    // Get the current position of the center of the bird in this frame.
+    int y = (int)bird.getCenterY();
+
+    if(this.model.collision(y)) {
+      tim.stop();
+    }
 
 //   if(gameOver == true){
 //     btn = new Button();
@@ -115,21 +109,21 @@ private void listen(ActionEvent e) {
 
 
     // Keep falling until key is pressed and realeased
-    int y = (int)bird.getCenterY();
-    bird.setCenterY(model.gravity(y));
+    bird.setCenterY(this.model.gravity(y));
+
 //
-//     for(int i = 0; i < columns.size(); i++) {
-//       Rectangle column = columns.get(i);
-//       column.setX((column.getX()-5));
-//     }
+    for(int i = 0; i < columns.size(); i++) {
+      Rectangle column = columns.get(i);
+      column.setX((column.getX()-5));
+    }
 //
 
-    // Has anyoneone pressed and realead the a key? If so, Jump
+    // Has anybody pressed and realead the a key? If so, Jump
     scene.setOnKeyReleased(k -> {
     String code = k.getCode().toString();
       if(code == "UP") {
         // seems like I am doing this twice. However, it works for now, so lets move on
-        bird.setCenterY(y + model.Jump());
+        bird.setCenterY(y + this.model.Jump());
       }
     });
 //
@@ -137,16 +131,7 @@ private void listen(ActionEvent e) {
 //
 
 //
-//     void addColumn() {
-//
-//       int space = 400;
-//       int width = 100;
-//       int height = 50 + (int)(Math.random()*300);
-//
-//       columns.add(new Rectangle(W + width + (columns.size() * 200), H - height - 120, width, height));
-//       columns.add(new Rectangle(W + width + (columns.size() - 1) * 200, 0, width, H - height - space));
-//
-    // }
+
 
 
 }
