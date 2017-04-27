@@ -1,5 +1,10 @@
 //TO DO:
-  // Add the column collision. Make sure its in the Model Class somehow.
+  // Like MIKU's program, maybe it can get stuck between the columns whiles the timeline still running.
+  // At this point, I feel like I could start to use a controller class. Lets see what goes on.
+  // For the report, shall I include this? Maybe, yes, for sure. Things need to be documented;
+  // SO: yesterday i had a model-view idea. Today it feels more like a controller somewhere
+  // One example for the controller is in the Collision class, instead of returning a boolean
+  // it could return a gameover to stop the time. GameOver is used multiple times.
 
 import java.util.ArrayList;
 import javafx.animation.*;
@@ -78,12 +83,6 @@ public class FlappyBirdView extends Application  {
   }
 
   private void listen(ActionEvent e) {
-    // Get the current position of the center of the bird in this frame.
-    int y = (int)bird.getCenterY();
-
-    if(this.model.collision(y)) {
-      tim.stop();
-    }
 
 //   if(gameOver == true){
 //     btn = new Button();
@@ -109,29 +108,27 @@ public class FlappyBirdView extends Application  {
 
 
     // Keep falling until key is pressed and realeased
-    bird.setCenterY(this.model.gravity(y));
+    bird.setCenterY(this.model.gravity((int)bird.getCenterY()));
 
 //
     for(int i = 0; i < columns.size(); i++) {
       Rectangle column = columns.get(i);
       column.setX((column.getX()-5));
     }
-//
+
+    if(model.collision(bird, columns)) {
+      tim.pause();
+    }
 
     // Has anybody pressed and realead the a key? If so, Jump
     scene.setOnKeyReleased(k -> {
     String code = k.getCode().toString();
       if(code == "UP") {
         // seems like I am doing this twice. However, it works for now, so lets move on
-        bird.setCenterY(y + this.model.Jump());
+        bird.setCenterY((int)bird.getCenterY() + this.model.Jump());
       }
     });
-//
+
     }
-//
-
-//
-
-
 
 }
