@@ -3,7 +3,7 @@ import javafx.scene.shape.Rectangle;
 
 public class Columns {
 
-  private ArrayList<Rectangle> columns;
+  private static ArrayList<Rectangle> columns;
 
   Columns(int W, int H) {
     columns = new ArrayList<Rectangle>();

@@ -24,6 +24,7 @@ public class FlappyBirdView extends Application  {
 
   int W = 800;
   int H = 700;
+  int columnTicks;
   Scene scene;
   Group root = new Group();
   Ellipse bird = new Ellipse();
@@ -47,7 +48,7 @@ public class FlappyBirdView extends Application  {
 
     setupStage();
 
-    root.getChildren().addAll(columns);
+    // root.getChildren().addAll(columns);
     root.getChildren().add(groundObject.getGround());
     root.getChildren().add(bird);
 
@@ -85,11 +86,18 @@ public class FlappyBirdView extends Application  {
       bird.setCenterY(W / 2 - 10);
       gameOver = false;
       model = new FlappyBirdModel();
+
+      root.getChildren().removeAll(columns);
+      resetColumns();
+
+      // columns.clear();
       tim.pause();
 
       scene.setOnKeyReleased(k -> {
       String code = k.getCode().toString();
           if(code == "UP"){
+            root.getChildren().addAll(columns);
+            
             tim.play();
           }
       });
@@ -116,7 +124,16 @@ public class FlappyBirdView extends Application  {
       }
     }
 
+    private void resetColumns() {
+      for(int i = 0; i < columns.size(); i++) {
+        Rectangle column = columns.get(i);
+        column.setX((column.getX()+ (columnTicks*5)));
+      }
+      columnTicks = 0;
+    }
+
     private void moveColumns() {
+      columnTicks++;
       for(int i = 0; i < columns.size(); i++) {
         Rectangle column = columns.get(i);
         column.setX((column.getX()-5));
