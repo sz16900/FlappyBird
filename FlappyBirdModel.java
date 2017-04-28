@@ -6,18 +6,19 @@ public class FlappyBirdModel {
 
   private int ticks;
   private int ymotion;
+  private Rectangle collidedColumn = new Rectangle();
 
   // this needs to be sorted, perhaps when its initialized
   int W = 800;
   int H = 700;
 
-  public int gravity(int birdCenter) {
+  public int gravity(Ellipse bird) {
     this.ticks++;
     if(this.ticks % 2 == 0 && this.ymotion < 15){
       // was 2, lets see what we can do about this
       this.ymotion = this.ymotion + 2;
     }
-    return ymotion + birdCenter;
+    return ymotion + (int)bird.getCenterY();
 
   }
 
@@ -29,10 +30,26 @@ public class FlappyBirdModel {
     return this.ymotion;
   }
 
+  public int killBird(Ellipse bird) {
+    if(bird.getCenterX() <= collidedColumn.getX()) {
+      return ((int)collidedColumn.getX() -2 * (int)bird.getRadiusX() + 10);
+    }
+    else {
+      if(collidedColumn.getY() != 0) {
+        return ((int)collidedColumn.getY() - 2 * (int)bird.getRadiusY());
+      }
+      else if(bird.getCenterY() > collidedColumn.getHeight()) {
+        return ((int)collidedColumn.getHeight());
+      }
+    }
+    return;
+  }
+
   public boolean collision(Ellipse bird, ArrayList<Rectangle> columns) {
     for(Rectangle column:columns) {
       // Check for each columns collision
       if((column.getBoundsInParent().intersects(bird.getBoundsInParent()))) {
+        collidedColumn = column;
         return true;
       }
     }

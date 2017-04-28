@@ -17,6 +17,8 @@ import javafx.stage.*;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
 import javafx.event.*;
+import javafx.scene.input.*;
+
 
 public class FlappyBirdView extends Application  {
 
@@ -36,16 +38,20 @@ public class FlappyBirdView extends Application  {
   Ground groundObject = new Ground(H, W);
   RestartButton button = new RestartButton();
 
-  @Override
-  public void start (Stage stage){
-    primaryStage = stage;
-    setupStage();
-
     // str = new IntegerStringConverter();
 
-    root.getChildren().addAll(columns = columnsObject.getColums());
+  @Override
+  public void start (Stage stage){
+
+    primaryStage = stage;
+    columns = columnsObject.getColums();
+    bird = birdObject.getBird();
+
+    setupStage();
+
+    root.getChildren().addAll(columns);
     root.getChildren().add(groundObject.getGround());
-    root.getChildren().addAll(bird = birdObject.getBird());
+    root.getChildren().add(bird);
 
     scene = new Scene(root);
     primaryStage.setScene(scene);
@@ -71,8 +77,7 @@ public class FlappyBirdView extends Application  {
     }
 
     private void birdFall() {
-      int axisY = (int)bird.getCenterY();
-      int gravity = this.model.gravity(axisY);
+      int gravity = this.model.gravity(bird);
       bird.setCenterY(gravity);
     }
 
@@ -82,42 +87,24 @@ public class FlappyBirdView extends Application  {
 
       if(gameOver) {
 
-        // Changes the window's layout
-        root.getChildren().add(button.getButton());
-        root.getChildren().removeAll(columns);
-        root.getChildren().remove(bird);
-        tim.pause();
+        bird.setCenterY(model.killBird(bird));
+        bird.setCenterY(H - 120 - bird.getRadiusY());
+        // My fix to make it move along with the columns (hehehe)
+        bird.setCenterX((int)bird.getCenterX() - 5);
+
+        // // Changes the window's layout
+      //   if(!root.getChildren().contains(button.getButton())) {
+      //
+      //   root.getChildren().add(button.getButton());
+      // }
+        // root.getChildren().removeAll(columns);
+        // root.getChildren().remove(bird);
+        // tim.pause();
 
         // Listens to the button click.
-        clickButtonRestart();
+        button.getButton().setOnMouseClicked(this::click);
 
       }
-    }
-
-    private void clickButtonRestart() {
-      button.getButton().setOnMouseClicked(k -> {
-
-        // Changes the wondow's layout
-        root.getChildren().remove(button.getButton());
-        gameOver = false;
-        // Bird back in the center
-        bird.setCenterX(W / 2 - 10);
-        bird.setCenterY(H / 2 - 10);
-        root.getChildren().add(bird);
-        // Resume
-        tim.play();
-      });
-
-    }
-
-    private void pressUp() {
-      scene.setOnKeyReleased(k -> {
-      String code = k.getCode().toString();
-        if(code == "UP") {
-          // seems like I am doing this twice. However, it works for now, so lets move on
-          bird.setCenterY((int)bird.getCenterY() + this.model.Jump());
-        }
-      });
     }
 
     private void moveColumns() {
@@ -128,16 +115,34 @@ public class FlappyBirdView extends Application  {
     }
 
   private void listen(ActionEvent e) {
-
     // Is the game over?
     gameOver();
     // Keep falling until key is pressed and realeased
     birdFall();
     // Has anyone pressed the UP key?
-    pressUp();
+    scene.setOnKeyReleased(this::press);
     // Update the columns
     moveColumns();
+  }
 
+  private void click(MouseEvent event) {
+    // Changes the window's layout
+    root.getChildren().remove(button.getButton());
+    gameOver = false;
+    // Bird back in the center
+    bird.setCenterX(W / 2 - 10);
+    bird.setCenterY(H / 2 - 10);
+    root.getChildren().add(bird);
+    // Resume
+    tim.play();
+  }
+
+  private void press(KeyEvent event) {
+    String code = event.getCode().toString();
+      if(code == "UP") {
+        // This is my cheap way of making it not move after dead. Need to fix this.
+        if(!gameOver){bird.setCenterY((int)bird.getCenterY() + this.model.Jump());}
+      }
   }
 
 }
