@@ -5,13 +5,13 @@
   // SO: yesterday i had a model-view idea. Today it feels more like a controller somewhere
   // One example for the controller is in the Collision class, instead of returning a boolean
   // it could return a gameover to stop the time. GameOver is used multiple times.
+  // The moving of the columns need to happen in model, not here.
 
 import java.util.ArrayList;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.image.ImageView;
@@ -41,12 +41,11 @@ public class FlappyBirdView extends Application  {
   ArrayList<Rectangle> columns;
   Columns columnsObject = new Columns(H, W);
   boolean gameOver = false;
-  Button btn;
   FlappyBirdModel model = new FlappyBirdModel();
   Stage primaryStage = new Stage();
   Bird birdObject = new Bird(H, W);
   Ground groundObject = new Ground(H, W);
-  Rectangle ground;
+  RestartButton button = new RestartButton();
 
   @Override
   public void start (Stage stage){
@@ -56,7 +55,7 @@ public class FlappyBirdView extends Application  {
     // str = new IntegerStringConverter();
 
     root.getChildren().addAll(columns = columnsObject.getColums());
-    root.getChildren().add(ground = groundObject.getGround());
+    root.getChildren().add(groundObject.getGround());
     root.getChildren().addAll(bird = birdObject.getBird());
 
     scene = new Scene(root);
@@ -84,40 +83,32 @@ public class FlappyBirdView extends Application  {
 
   private void listen(ActionEvent e) {
 
-//   if(gameOver == true){
-//     btn = new Button();
-//     btn.setText("Restart");
-//     btn.setTranslateX(350);
-//     btn.setTranslateY(600);
-//     btn.setPrefSize(200, 50);
-//     btn.setTextFill(Color.BLUE);
-//     btn.setFont(new Font("Arial", 20));
-//     root.getChildren().add(btn);
-//     root.getChildren().removeAll(columns);
-//     root.getChildren().remove(bird);
-//     btn.setOnMouseClicked(k ->
-//     {
-//       root.getChildren().remove(btn);
-//       tim.play();
-//       gameOver = false;
-//       bird.setCenterX(W / 2 - 10);
-//       bird.setCenterY(H / 2 - 10);
-//       root.getChildren().add(bird);
-//     });
-//   }
+    gameOver = model.collision(bird, columns);
+    if(gameOver) {
+      root.getChildren().add(button.getButton());
+
+   root.getChildren().removeAll(columns);
+   root.getChildren().remove(bird);
+      tim.pause();
+
+    button.getButton().setOnMouseClicked(k ->
+    {
+      root.getChildren().remove(button.getButton());
+      tim.play();
+      gameOver = false;
+      bird.setCenterX(W / 2 - 10);
+      bird.setCenterY(H / 2 - 10);
+      root.getChildren().add(bird);
+    });
+  }
 
 
     // Keep falling until key is pressed and realeased
     bird.setCenterY(this.model.gravity((int)bird.getCenterY()));
 
-//
     for(int i = 0; i < columns.size(); i++) {
       Rectangle column = columns.get(i);
       column.setX((column.getX()-5));
-    }
-
-    if(model.collision(bird, columns)) {
-      tim.pause();
     }
 
     // Has anybody pressed and realead the a key? If so, Jump
