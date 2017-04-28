@@ -13,16 +13,18 @@ public class FlappyBirdModel {
   int H = 700;
 
   public int gravity(Ellipse bird) {
+    // By having ticks here, one can either speed up the jumo of slow it down
+    // depends on how hard one wants the game to be
     this.ticks++;
     if(this.ticks % 2 == 0 && this.ymotion < 15){
       // was 2, lets see what we can do about this
       this.ymotion = this.ymotion + 2;
     }
     return ymotion + (int)bird.getCenterY();
-
   }
 
   public int Jump() {
+    // Reset the ymotion so the jump is smooth
     if(this.ymotion > 0) {
       this.ymotion = 0;
     }
@@ -30,25 +32,10 @@ public class FlappyBirdModel {
     return this.ymotion;
   }
 
-  public int killBird(Ellipse bird) {
-    if(bird.getCenterX() <= collidedColumn.getX()) {
-      return ((int)collidedColumn.getX() -2 * (int)bird.getRadiusX() + 10);
-    }
-    else {
-      if(collidedColumn.getY() != 0) {
-        return ((int)collidedColumn.getY() - 2 * (int)bird.getRadiusY());
-      }
-      else if(bird.getCenterY() > collidedColumn.getHeight()) {
-        return ((int)collidedColumn.getHeight());
-      }
-    }
-    // this needs to change
-    return 0;
-  }
-
   public boolean collision(Ellipse bird, ArrayList<Rectangle> columns) {
     for(Rectangle column:columns) {
-      // Check for each columns collision
+      // Check for each columns collision by finding the intersection of bird
+      // and column
       if((column.getBoundsInParent().intersects(bird.getBoundsInParent()))) {
         collidedColumn = column;
         return true;

@@ -1,3 +1,7 @@
+// TO DO: clear the columns once they have exited the screen
+//        only 20 columns? what happens if player plays more?
+//        insert png into bird + cloud
+
 import java.util.ArrayList;
 import javafx.animation.*;
 import javafx.application.Application;
@@ -45,21 +49,15 @@ public class FlappyBirdView extends Application  {
     primaryStage = stage;
     columns = columnsObject.getColums();
     bird = birdObject.getBird();
-
     setupStage();
-
-    // root.getChildren().addAll(columns);
     root.getChildren().add(groundObject.getGround());
-    root.getChildren().add(bird);
 
     scene = new Scene(root);
     primaryStage.setScene(scene);
     primaryStage.show();
 
     launchTimer();
-
     mainMenu();
-
     }
 
     public void setupStage() {
@@ -82,25 +80,18 @@ public class FlappyBirdView extends Application  {
     }
 
     private void mainMenu() {
+      // set the bird back to the center and reset the logic of the game
       bird.setCenterX(W / 2 - 10);
       bird.setCenterY(W / 2 - 10);
       gameOver = false;
       model = new FlappyBirdModel();
 
       root.getChildren().removeAll(columns);
+      root.getChildren().add(bird);
+
       resetColumns();
-
-      // columns.clear();
       tim.pause();
-
-      scene.setOnKeyReleased(k -> {
-      String code = k.getCode().toString();
-          if(code == "UP"){
-            root.getChildren().addAll(columns);
-            
-            tim.play();
-          }
-      });
+      scene.setOnKeyReleased(this::pressToStart);
     }
 
     private void gameOver() {
@@ -108,19 +99,13 @@ public class FlappyBirdView extends Application  {
       gameOver = model.collision(bird, columns);
 
       if(gameOver) {
-
-        bird.setCenterY(model.killBird(bird));
-        bird.setCenterY(H - 120 - bird.getRadiusY());
-        // Keep bird stuck to miving out of the picture
-        bird.setCenterX((int)bird.getCenterX() - 5);
-
+        root.getChildren().remove(bird);
+        // Make sure this has been added once, else, just listen for click.
         if(!root.getChildren().contains(button.getButton())) {
           root.getChildren().addAll(button.getButton());
         }
-
-        // Listens to the button click.
+        // Listens to the button click to reset the game.
         button.getButton().setOnMouseClicked(this::click);
-
       }
     }
 
@@ -133,6 +118,8 @@ public class FlappyBirdView extends Application  {
     }
 
     private void moveColumns() {
+      // Keep track of how many times columms have moved. This will help to
+      // reset the columns at gameOver.
       columnTicks++;
       for(int i = 0; i < columns.size(); i++) {
         Rectangle column = columns.get(i);
@@ -140,13 +127,15 @@ public class FlappyBirdView extends Application  {
       }
     }
 
+/*----------------------These are the Listening events------------------------*/
+
   private void listen(ActionEvent e) {
     // Is the game over?
     gameOver();
     // Keep falling until key is pressed and realeased
     birdFall();
     // Has anyone pressed the UP key?
-    scene.setOnKeyReleased(this::press);
+    scene.setOnKeyReleased(this::pressUP);
     // Update the columns
     moveColumns();
   }
@@ -157,12 +146,19 @@ public class FlappyBirdView extends Application  {
     mainMenu();
   }
 
-  private void press(KeyEvent event) {
+  private void pressUP(KeyEvent event) {
     String code = event.getCode().toString();
-      if(code == "UP") {
-        // This is my cheap way of making it not move after dead. Need to fix this.
-        if(!gameOver){bird.setCenterY((int)bird.getCenterY() + this.model.Jump());}
-      }
+    if(code == "UP") {
+      bird.setCenterY((int)bird.getCenterY() + this.model.Jump());
+    }
+  }
+
+  private void pressToStart(KeyEvent event) {
+    String code = event.getCode().toString();
+    if(code == "UP"){
+      root.getChildren().addAll(columns);
+      tim.play();
+    }
   }
 
 }
