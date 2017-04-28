@@ -32,13 +32,11 @@ public class FlappyBirdView extends Application  {
   ArrayList<Rectangle> columns;
   Columns columnsObject = new Columns(H, W);
   boolean gameOver = false;
-  FlappyBirdModel model = new FlappyBirdModel();
+  FlappyBirdModel model;
   Stage primaryStage = new Stage();
   Bird birdObject = new Bird(H, W);
   Ground groundObject = new Ground(H, W);
   RestartButton button = new RestartButton();
-
-    // str = new IntegerStringConverter();
 
   @Override
   public void start (Stage stage){
@@ -59,6 +57,8 @@ public class FlappyBirdView extends Application  {
 
     launchTimer();
 
+    mainMenu();
+
     }
 
     public void setupStage() {
@@ -73,12 +73,26 @@ public class FlappyBirdView extends Application  {
       tim.setCycleCount(Animation.INDEFINITE);
       KeyFrame kf = new KeyFrame(Duration.millis(20), this::listen);
       tim.getKeyFrames().add(kf);
-      tim.play();
     }
 
     private void birdFall() {
       int gravity = this.model.gravity(bird);
       bird.setCenterY(gravity);
+    }
+
+    private void mainMenu() {
+      bird.setCenterX(W / 2 - 10);
+      bird.setCenterY(W / 2 - 10);
+      gameOver = false;
+      model = new FlappyBirdModel();
+      tim.pause();
+
+      scene.setOnKeyReleased(k -> {
+      String code = k.getCode().toString();
+          if(code == "UP"){
+            tim.play();
+          }
+      });
     }
 
     private void gameOver() {
@@ -89,17 +103,12 @@ public class FlappyBirdView extends Application  {
 
         bird.setCenterY(model.killBird(bird));
         bird.setCenterY(H - 120 - bird.getRadiusY());
-        // My fix to make it move along with the columns (hehehe)
+        // Keep bird stuck to miving out of the picture
         bird.setCenterX((int)bird.getCenterX() - 5);
 
-        // // Changes the window's layout
-      //   if(!root.getChildren().contains(button.getButton())) {
-      //
-      //   root.getChildren().add(button.getButton());
-      // }
-        // root.getChildren().removeAll(columns);
-        // root.getChildren().remove(bird);
-        // tim.pause();
+        if(!root.getChildren().contains(button.getButton())) {
+          root.getChildren().addAll(button.getButton());
+        }
 
         // Listens to the button click.
         button.getButton().setOnMouseClicked(this::click);
@@ -128,13 +137,7 @@ public class FlappyBirdView extends Application  {
   private void click(MouseEvent event) {
     // Changes the window's layout
     root.getChildren().remove(button.getButton());
-    gameOver = false;
-    // Bird back in the center
-    bird.setCenterX(W / 2 - 10);
-    bird.setCenterY(H / 2 - 10);
-    root.getChildren().add(bird);
-    // Resume
-    tim.play();
+    mainMenu();
   }
 
   private void press(KeyEvent event) {

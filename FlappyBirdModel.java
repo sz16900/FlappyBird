@@ -42,7 +42,8 @@ public class FlappyBirdModel {
         return ((int)collidedColumn.getHeight());
       }
     }
-    return;
+    // this needs to change
+    return 0;
   }
 
   public boolean collision(Ellipse bird, ArrayList<Rectangle> columns) {
