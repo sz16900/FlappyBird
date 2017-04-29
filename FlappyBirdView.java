@@ -10,13 +10,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.image.ImageView;
+
+import javafx.scene.image.Image;
+// import javafx.scene.image.ImageView;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.image.Image;
 import javafx.stage.*;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
@@ -28,6 +29,7 @@ public class FlappyBirdView extends Application  {
 
   int W = 800;
   int H = 700;
+  int X;
   int columnTicks;
   Scene scene;
   Group root = new Group();
@@ -42,15 +44,22 @@ public class FlappyBirdView extends Application  {
   Bird birdObject = new Bird(H, W);
   Ground groundObject = new Ground(H, W);
   RestartButton button = new RestartButton();
+  ImageView cloud;
+  Cloud cloudObject = new Cloud(W);
 
   @Override
   public void start (Stage stage){
 
+    X = cloudObject.getCloudX();
+
+
     primaryStage = stage;
     columns = columnsObject.getColums();
     bird = birdObject.getBird();
+    cloud = cloudObject.getCloud();
     setupStage();
     root.getChildren().add(groundObject.getGround());
+    root.getChildren().add(cloud);
 
     scene = new Scene(root);
     primaryStage.setScene(scene);
@@ -112,7 +121,7 @@ public class FlappyBirdView extends Application  {
     private void resetColumns() {
       for(int i = 0; i < columns.size(); i++) {
         Rectangle column = columns.get(i);
-        column.setX((column.getX()+ (columnTicks*5)));
+        column.setX((column.getX() + (columnTicks * 5)));
       }
       columnTicks = 0;
     }
@@ -124,10 +133,14 @@ public class FlappyBirdView extends Application  {
       for(int i = 0; i < columns.size(); i++) {
         Rectangle column = columns.get(i);
         column.setX((column.getX()-5));
+        // This remove inserts a bug
+        // if(column.getX() + column.getWidth() < 0) {
+        //   columns.remove(i);
+        // }
       }
     }
 
-/*----------------------These are the Listening events------------------------*/
+/*----------------------These are the Listening Events------------------------*/
 
   private void listen(ActionEvent e) {
     // Is the game over?
@@ -138,6 +151,10 @@ public class FlappyBirdView extends Application  {
     scene.setOnKeyReleased(this::pressUP);
     // Update the columns
     moveColumns();
+
+
+    X = X - 2;
+    cloud.setX(X);
   }
 
   private void click(MouseEvent event) {
