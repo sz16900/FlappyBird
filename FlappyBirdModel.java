@@ -4,13 +4,15 @@ import java.util.ArrayList;
 
 public class FlappyBirdModel {
 
-  private int ticks;
-  private int ymotion;
+  private int ticks, ymotion, W, H;
   private Rectangle collidedColumn = new Rectangle();
 
-  // this needs to be sorted, perhaps when its initialized
-  int W = 800;
-  int H = 700;
+  FlappyBirdModel(int W, int H) {
+    this.W = W;
+    this.H = H;
+    this.ticks = 0;
+    this.ymotion = 0;
+  }
 
   public int gravity(Ellipse bird) {
     // By having ticks here, one can either speed up the jumo of slow it down

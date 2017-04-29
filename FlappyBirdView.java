@@ -1,41 +1,32 @@
-// TO DO: clear the columns once they have exited the screen
-//        only 20 columns? what happens if player plays more?
-//        insert png into bird + cloud
+// TO DO: Add coins to increse the score
+          // Recycle the columns to avoid cluttering memory
 
 import java.util.ArrayList;
+import javafx.util.Duration;
+import javafx.util.converter.IntegerStringConverter;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.scene.image.ImageView;
-
 import javafx.scene.image.Image;
-// import javafx.scene.image.ImageView;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.stage.*;
-import javafx.util.Duration;
-import javafx.util.converter.IntegerStringConverter;
 import javafx.event.*;
 import javafx.scene.input.*;
-
 
 public class FlappyBirdView extends Application  {
 
   int W = 800;
   int H = 700;
-  int X;
-  int columnTicks;
+  int X, score, columnTicks;
   Scene scene;
   Group root = new Group();
   Ellipse bird = new Ellipse();
   Timeline tim = new Timeline();
-  IntegerStringConverter str;
+  IntegerStringConverter str = new IntegerStringConverter();;
   ArrayList<Rectangle> columns;
   Columns columnsObject = new Columns(H, W);
   boolean gameOver = false;
@@ -46,20 +37,24 @@ public class FlappyBirdView extends Application  {
   RestartButton button = new RestartButton();
   ImageView cloud;
   Cloud cloudObject = new Cloud(W);
+  GameLabels labelObject = new GameLabels(W, H);
+  Label scoreLabel, menuLabel;
 
   @Override
   public void start (Stage stage){
-
-    // X = cloudObject.getCloudX();
-
 
     primaryStage = stage;
     columns = columnsObject.getColums();
     bird = birdObject.getBird();
     cloud = cloudObject.getCloud();
+    scoreLabel = labelObject.getScoreLabel();
+    menuLabel = labelObject.getMenuLabel();
+
     setupStage();
+    // They are here and not at mainMenu() because these are never removed
     root.getChildren().add(groundObject.getGround());
     root.getChildren().add(cloud);
+    root.getChildren().addAll(scoreLabel);
 
     scene = new Scene(root);
     primaryStage.setScene(scene);
@@ -73,8 +68,7 @@ public class FlappyBirdView extends Application  {
       primaryStage.setTitle("Flappy Bird");
       primaryStage.setHeight(H);
       primaryStage.setWidth(W);
-      // I don't want the user to resize the window. Window is has set dimension
-      primaryStage.setResizable(false);
+      primaryStage.setResizable(false); // Resizing window not allowed
     }
 
     private void launchTimer() {
@@ -83,30 +77,24 @@ public class FlappyBirdView extends Application  {
       tim.getKeyFrames().add(kf);
     }
 
-    private void birdFall() {
-      int gravity = this.model.gravity(bird);
-      bird.setCenterY(gravity);
-    }
-
     private void mainMenu() {
       // set the bird back to the center and reset the logic of the game
       bird.setCenterX(W / 2 - 10);
       bird.setCenterY(W / 2 - 10);
       gameOver = false;
-      model = new FlappyBirdModel();
-
+      model = new FlappyBirdModel(W, H);
+      score = 0;
+      scoreLabel.setText("Score:" + " " + str.toString(score));
       root.getChildren().removeAll(columns);
       root.getChildren().add(bird);
-
+      root.getChildren().add(menuLabel);
       resetColumns();
       tim.pause();
       scene.setOnKeyReleased(this::pressToStart);
     }
 
     private void gameOver() {
-
       gameOver = model.collision(bird, columns);
-
       if(gameOver) {
         root.getChildren().remove(bird);
         // Make sure this has been added once, else, just listen for click.
@@ -118,6 +106,7 @@ public class FlappyBirdView extends Application  {
       }
     }
 
+    // This is not very DRY
     private void resetColumns() {
       for(int i = 0; i < columns.size(); i++) {
         Rectangle column = columns.get(i);
@@ -138,34 +127,35 @@ public class FlappyBirdView extends Application  {
       }
     }
 
+    private void updateScore() {
+      if(!gameOver) { score++; }
+      scoreLabel.setText("Score:" + " " + str.toString(score/3));
+    }
+
     private void updateCloud() {
       int X = (int)cloud.getX();
       int imgW = cloudObject.getImageWidth();
       X = model.cloudMove(X);
 
+      // Bring the cloud back once it leaves the window.
       if( X < (0 - cloudObject.getImageWidth()) ) {
         X = model.cloudRespawn(X, imgW);
         cloud.setX(X);
-      }
-      else{
-        cloud.setX(X);
-      }
+      } else { cloud.setX(X); }
     }
 
 /*----------------------These are the Listening Events------------------------*/
 
+// Listen for every single KeyFrame
   private void listen(ActionEvent e) {
-    // Is the game over?
     gameOver();
     // Keep falling until key is pressed and realeased
-    birdFall();
+    bird.setCenterY(this.model.gravity(bird));
     // Has anyone pressed the UP key?
     scene.setOnKeyReleased(this::pressUP);
-    // Update the columns
     moveColumns();
-    //Update cloud
     updateCloud();
-
+    updateScore();
   }
 
   private void click(MouseEvent event) {
@@ -185,6 +175,7 @@ public class FlappyBirdView extends Application  {
     String code = event.getCode().toString();
     if(code == "UP"){
       root.getChildren().addAll(columns);
+      root.getChildren().remove(menuLabel);
       tim.play();
     }
   }
