@@ -1,5 +1,4 @@
 import javafx.scene.shape.Ellipse;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.image.Image;
 
@@ -12,9 +11,6 @@ public class Bird {
     // convert image into a patter to be pasted onto the ellipse
     ImagePattern ip = new ImagePattern(img);
     bird = new Ellipse();
-    bird.setFill(Color.DARKGREEN);
-    // bird.setRadiusX(20);
-    // bird.setRadiusY(20);
     bird.setCenterX(W / 2 - 10);
     bird.setCenterY(H / 2 - 10);
     bird.setFill(ip);

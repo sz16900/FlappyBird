@@ -50,7 +50,7 @@ public class FlappyBirdView extends Application  {
   @Override
   public void start (Stage stage){
 
-    X = cloudObject.getCloudX();
+    // X = cloudObject.getCloudX();
 
 
     primaryStage = stage;
@@ -131,12 +131,24 @@ public class FlappyBirdView extends Application  {
       // reset the columns at gameOver.
       columnTicks++;
       for(int i = 0; i < columns.size(); i++) {
+
         Rectangle column = columns.get(i);
-        column.setX((column.getX()-5));
-        // This remove inserts a bug
-        // if(column.getX() + column.getWidth() < 0) {
-        //   columns.remove(i);
-        // }
+        int columnX = model.columnMove(column);
+        column.setX(columnX);
+      }
+    }
+
+    private void updateCloud() {
+      int X = (int)cloud.getX();
+      int imgW = cloudObject.getImageWidth();
+      X = model.cloudMove(X);
+
+      if( X < (0 - cloudObject.getImageWidth()) ) {
+        X = model.cloudRespawn(X, imgW);
+        cloud.setX(X);
+      }
+      else{
+        cloud.setX(X);
       }
     }
 
@@ -151,10 +163,9 @@ public class FlappyBirdView extends Application  {
     scene.setOnKeyReleased(this::pressUP);
     // Update the columns
     moveColumns();
+    //Update cloud
+    updateCloud();
 
-
-    X = X - 2;
-    cloud.setX(X);
   }
 
   private void click(MouseEvent event) {

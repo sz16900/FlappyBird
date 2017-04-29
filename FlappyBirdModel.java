@@ -48,4 +48,22 @@ public class FlappyBirdModel {
     return false;
   }
 
+  public int cloudMove(int X) {
+    X = X - 2;
+    return X;
+  }
+
+  public int cloudRespawn(int X, int imgW) {
+    X = W + imgW;
+    return X;
+  }
+
+  public int columnMove(Rectangle column) {
+    return (int)column.getX() - 5;
+  }
+
+  public int columnReset(int columnX, int columnTicks) {
+    return (columnX + (columnTicks * 5));
+  }
+
 }

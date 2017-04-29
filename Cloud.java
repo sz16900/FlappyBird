@@ -1,9 +1,5 @@
-import javafx.scene.shape.Ellipse;
-import javafx.scene.paint.Color;
-// import javafx.scene.paint.ImagePattern;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
 
 public class Cloud {
   private Image img;
@@ -12,10 +8,6 @@ public class Cloud {
 
 
   Cloud(int W) {
-    // Image img = new Image("birdFrame0.png");
-    // // convert image into a patter to be pasted onto the ellipse
-    // ImagePattern ip = new ImagePattern(img);
-
     img = new Image("cloud.png");
     imgView = new ImageView(img);
     X = W + (int)img.getWidth();
@@ -28,8 +20,9 @@ public class Cloud {
     return imgView;
   }
 
-  public int getCloudX() {
-    return X;
+  public int getImageWidth() {
+    int imgW = (int)img.getWidth();
+    return imgW;
   }
 
 }
