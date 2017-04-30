@@ -21,14 +21,15 @@ public class FlappyBirdView extends Application  {
 
   int W = 800;
   int H = 700;
-  int X, score, columnTicks;
+  int columnSize = 5;
+  int X, columnTicks;
   Scene scene;
   Group root = new Group();
   Ellipse bird = new Ellipse();
   Timeline tim = new Timeline();
   IntegerStringConverter str = new IntegerStringConverter();;
   ArrayList<Rectangle> columns;
-  Columns columnsObject = new Columns(H, W);
+  Columns columnsObject = new Columns(H, W, columnSize);
   boolean gameOver = false;
   FlappyBirdModel model;
   Stage primaryStage = new Stage();
@@ -38,17 +39,18 @@ public class FlappyBirdView extends Application  {
   ImageView cloud;
   Cloud cloudObject = new Cloud(W);
   GameLabels labelObject = new GameLabels(W, H);
-  Label scoreLabel, menuLabel;
+  Label scoreLabel, menuLabel, levelLabel;
 
   @Override
   public void start (Stage stage){
 
     primaryStage = stage;
-    columns = columnsObject.getColums();
+    columns = columnsObject.getColumns();
     bird = birdObject.getBird();
     cloud = cloudObject.getCloud();
     scoreLabel = labelObject.getScoreLabel();
     menuLabel = labelObject.getMenuLabel();
+    levelLabel = labelObject.getLevelLabel();
 
     setupStage();
     // They are here and not at mainMenu() because these are never removed
@@ -82,12 +84,14 @@ public class FlappyBirdView extends Application  {
       bird.setCenterX(W / 2 - 10);
       bird.setCenterY(W / 2 - 10);
       gameOver = false;
+      columnSize = 5;
       model = new FlappyBirdModel(W, H);
-      score = 0;
-      scoreLabel.setText("Score:" + " " + str.toString(score));
+      scoreLabel.setText("Score:" + " 0" );
+      levelLabel.setText( "Level:" + " 1" );
       root.getChildren().removeAll(columns);
       root.getChildren().add(bird);
       root.getChildren().add(menuLabel);
+      root.getChildren().add(levelLabel);
       resetColumns();
       tim.pause();
       scene.setOnKeyReleased(this::pressToStart);
@@ -97,6 +101,7 @@ public class FlappyBirdView extends Application  {
       gameOver = model.collision(bird, columns);
       if(gameOver) {
         root.getChildren().remove(bird);
+        root.getChildren().remove(levelLabel);
         // Make sure this has been added once, else, just listen for click.
         if(!root.getChildren().contains(button.getButton())) {
           root.getChildren().addAll(button.getButton());
@@ -106,30 +111,37 @@ public class FlappyBirdView extends Application  {
       }
     }
 
-    // This is not very DRY
     private void resetColumns() {
-      for(int i = 0; i < columns.size(); i++) {
-        Rectangle column = columns.get(i);
-        column.setX((column.getX() + (columnTicks * 5)));
-      }
-      columnTicks = 0;
+      columnsObject = new Columns(H, W, columnSize);
+      columns = new ArrayList<Rectangle>();
+      columns = columnsObject.getColumns();
+      root.getChildren().addAll(columns);
     }
 
     private void moveColumns() {
-      // Keep track of how many times columms have moved. This will help to
-      // reset the columns at gameOver.
-      columnTicks++;
       for(int i = 0; i < columns.size(); i++) {
-
         Rectangle column = columns.get(i);
         int columnX = model.columnMove(column);
         column.setX(columnX);
+        // If this column has gone past the scree, remove it to open up memory
+        if(columnX + column.getWidth() == 0) {
+          columns.remove(i);
+          // If the array of columns is empty, double the array size.
+          // This is to increse Level
+          if(columns.size() == 0) {
+            columnSize = columnSize * 2;
+            levelLabel.setText( "Level:" + " " + str.toString(model.getLevel()) );
+            resetColumns();
+          }
+        }
       }
     }
 
     private void updateScore() {
-      if(!gameOver) { score++; }
-      scoreLabel.setText("Score:" + " " + str.toString(score/3));
+      if(!gameOver) {
+        // Fetch the score from the model. Divide by three so it goes up slower.
+        scoreLabel.setText( "Score:" + " " + str.toString(model.getScore()/3) );
+      }
     }
 
     private void updateCloud() {
@@ -174,7 +186,7 @@ public class FlappyBirdView extends Application  {
   private void pressToStart(KeyEvent event) {
     String code = event.getCode().toString();
     if(code == "UP"){
-      root.getChildren().addAll(columns);
+      // root.getChildren().addAll(columns);
       root.getChildren().remove(menuLabel);
       tim.play();
     }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class FlappyBirdModel {
 
-  private int ticks, ymotion, W, H;
+  private int ticks, ymotion, W, H, score, level, columnSize;
   private Rectangle collidedColumn = new Rectangle();
 
   FlappyBirdModel(int W, int H) {
@@ -12,6 +12,8 @@ public class FlappyBirdModel {
     this.H = H;
     this.ticks = 0;
     this.ymotion = 0;
+    this.score = 0;
+    this.level = 1;
   }
 
   public int gravity(Ellipse bird) {
@@ -66,6 +68,16 @@ public class FlappyBirdModel {
 
   public int columnReset(int columnX, int columnTicks) {
     return (columnX + (columnTicks * 5));
+  }
+
+  public int getScore() {
+    this.score = this.score + 1;
+    return this.score;
+  }
+
+  public int getLevel() {
+    this.level = this.level + 1;
+    return this.level;
   }
 
 }

@@ -5,17 +5,25 @@ import javafx.scene.paint.Color;
 public class GameLabels {
   private Label scoreLabel;
   private Label menuLabel;
+  private Label levelLabel;
 
   GameLabels(int W, int H) {
     scoreLabel = new Label();
-    scoreLabel.setFont(new Font("Arial", 20));
-    scoreLabel.setLayoutY(H - 85);
+    scoreLabel.setFont(new Font("Arial", 50));
+    scoreLabel.setLayoutY(600);
+
     menuLabel = new Label();
-    menuLabel.setText("Press UP key to start!");
-    menuLabel.setFont(new Font("Arial", 50));
+    menuLabel.setText("Press UP key!");
+    menuLabel.setFont(new Font("Arial", 80));
     menuLabel.setLayoutX(W / 2 - 250);
     menuLabel.setLayoutY(H / 2 - 100);
     menuLabel.setTextFill(Color.RED);
+    
+    levelLabel = new Label();
+    levelLabel.setFont(new Font("Arial", 50));
+    levelLabel.setLayoutX(300);
+    levelLabel.setLayoutY(0);
+    levelLabel.setTextFill(Color.BLUE);
   }
 
   public Label getScoreLabel() {
@@ -26,4 +34,7 @@ public class GameLabels {
     return this.menuLabel;
   }
 
+  public Label getLevelLabel() {
+    return this.levelLabel;
+  }
 }

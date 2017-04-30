@@ -10,7 +10,7 @@ public class RestartButton {
   RestartButton() {
     btn = new Button();
     btn.setText("Restart");
-    btn.setTranslateX(600);
+    btn.setTranslateX(590);
     btn.setTranslateY(600);
     btn.setPrefSize(200, 50);
     btn.setTextFill(Color.BLUE);
