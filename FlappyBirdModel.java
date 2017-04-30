@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 public class FlappyBirdModel {
 
-  private int ticks, ymotion, W, H, score, level, columnSize;
+  private int ticks, birdYmotion, W, H, score, level, columnSize, coinXmotion;
   private Rectangle collidedColumn = new Rectangle();
 
   FlappyBirdModel(int W, int H) {
     this.W = W;
     this.H = H;
     this.ticks = 0;
-    this.ymotion = 0;
+    this.birdYmotion = 0;
     this.score = 0;
     this.level = 1;
   }
@@ -20,23 +20,27 @@ public class FlappyBirdModel {
     // By having ticks here, one can either speed up the jumo of slow it down
     // depends on how hard one wants the game to be
     this.ticks++;
-    if(this.ticks % 2 == 0 && this.ymotion < 15){
+    if(this.ticks % 2 == 0 && this.birdYmotion < 15){
       // was 2, lets see what we can do about this
-      this.ymotion = this.ymotion + 2;
+      this.birdYmotion = this.birdYmotion + 2;
     }
-    return ymotion + (int)bird.getCenterY();
+    return this.birdYmotion + (int)bird.getCenterY();
   }
 
   public int Jump() {
     // Reset the ymotion so the jump is smooth
-    if(this.ymotion > 0) {
-      this.ymotion = 0;
+    if(this.birdYmotion > 0) {
+      this.birdYmotion = 0;
     }
-    this.ymotion = this.ymotion - 10;
-    return this.ymotion;
+    this.birdYmotion = this.birdYmotion - 10;
+    return this.birdYmotion;
   }
 
   public boolean collision(Ellipse bird, ArrayList<Rectangle> columns) {
+    // Check for Sky and Ground
+    if(bird.getCenterY() > H - 120 || bird.getCenterY() < 0) {
+      return true;
+    }
     for(Rectangle column:columns) {
       // Check for each columns collision by finding the intersection of bird
       // and column
@@ -45,8 +49,17 @@ public class FlappyBirdModel {
         return true;
       }
     }
-    // Check for Sky and Ground
-    if(bird.getCenterY() > H - 120 || bird.getCenterY() < 0) {
+    return false;
+  }
+
+  public int coinMovement(Ellipse coin, Ellipse bird) {
+    int X = (int)coin.getCenterX() - 3;
+    return X;
+  }
+
+  public boolean coinCollision(Ellipse coin, Ellipse bird) {
+    if((coin.getBoundsInParent().intersects(bird.getBoundsInParent()))) {
+      this.score = this.score + 100;
       return true;
     }
     return false;

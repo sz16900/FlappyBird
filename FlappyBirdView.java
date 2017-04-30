@@ -1,5 +1,5 @@
-// TO DO: Add coins to increse the score
-          // Recycle the columns to avoid cluttering memory
+// TO DO: Put coins into some nd of array and random generate them. More like the
+          // Columns behaviour.
 
 import java.util.ArrayList;
 import javafx.util.Duration;
@@ -16,6 +16,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.*;
 import javafx.event.*;
 import javafx.scene.input.*;
+import java.io.*;
 
 public class FlappyBirdView extends Application  {
 
@@ -40,6 +41,8 @@ public class FlappyBirdView extends Application  {
   Cloud cloudObject = new Cloud(W);
   GameLabels labelObject = new GameLabels(W, H);
   Label scoreLabel, menuLabel, levelLabel;
+  Coin coinObject = new Coin(H, W);
+  Ellipse coin = new Ellipse();
 
   @Override
   public void start (Stage stage){
@@ -51,12 +54,14 @@ public class FlappyBirdView extends Application  {
     scoreLabel = labelObject.getScoreLabel();
     menuLabel = labelObject.getMenuLabel();
     levelLabel = labelObject.getLevelLabel();
+    coin = coinObject.getCoin();
 
     setupStage();
     // They are here and not at mainMenu() because these are never removed
     root.getChildren().add(groundObject.getGround());
     root.getChildren().add(cloud);
     root.getChildren().addAll(scoreLabel);
+    root.getChildren().addAll(coin);
 
     scene = new Scene(root);
     primaryStage.setScene(scene);
@@ -130,7 +135,7 @@ public class FlappyBirdView extends Application  {
           // This is to increse Level
           if(columns.size() == 0) {
             columnSize = columnSize * 2;
-            levelLabel.setText( "Level:" + " " + str.toString(model.getLevel()) );
+            levelLabel.setText("Level:" + " " + str.toString(model.getLevel()));
             resetColumns();
           }
         }
@@ -139,8 +144,16 @@ public class FlappyBirdView extends Application  {
 
     private void updateScore() {
       if(!gameOver) {
-        // Fetch the score from the model. Divide by three so it goes up slower.
-        scoreLabel.setText( "Score:" + " " + str.toString(model.getScore()/3) );
+        // Fetch the score from the model. Divide by twenty to increase slower.
+        scoreLabel.setText("Score:" + " " + str.toString(model.getScore()/20));
+      }
+    }
+
+    private void coinBehaviour() {
+      coin.setCenterX(model.coinMovement(coin, bird));
+      boolean eraseCoin = model.coinCollision(coin, bird);
+      if(eraseCoin) {
+        root.getChildren().remove(coin);
       }
     }
 
@@ -166,6 +179,7 @@ public class FlappyBirdView extends Application  {
     // Has anyone pressed the UP key?
     scene.setOnKeyReleased(this::pressUP);
     moveColumns();
+    coinBehaviour();
     updateCloud();
     updateScore();
   }
