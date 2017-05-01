@@ -8,7 +8,7 @@ public class Main {
     Columns columns = new Columns(H, W, 5);
     columns.test();
     System.out.println("All tests have passed!");
-    FlappyBirdModel model = new FlappyBirdModel(H, W);
+    FlappyBirdModel model = new FlappyBirdModel(W, H);
     model.test();
   }
 

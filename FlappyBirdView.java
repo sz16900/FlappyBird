@@ -59,6 +59,7 @@ public class FlappyBirdView extends Application  {
     }
 
     public void setupStage() {
+      // Create all of the objects required to run the program
       columns = columnsObject.getColumns();
       bird = birdObject.getBird();
       cloud = cloudObject.getCloud();
@@ -73,12 +74,15 @@ public class FlappyBirdView extends Application  {
       primaryStage.setResizable(false); // Resizing window not allowed
     }
 
+    // This is the Game's main loop
     private void launchTimer() {
       tim.setCycleCount(Animation.INDEFINITE);
       KeyFrame kf = new KeyFrame(Duration.millis(20), this::listen);
       tim.getKeyFrames().add(kf);
     }
 
+    // Set up the main menu. I.e: either at the beginning or when the player
+    // collides with an object in the game
     private void mainMenu() {
       birdObject = new Bird(H, W);
       bird = birdObject.getBird();
@@ -146,7 +150,7 @@ public class FlappyBirdView extends Application  {
     }
 
     private void coinBehaviour() {
-      coin.setCenterX(model.coinMovement(coin, bird));
+      coin.setCenterX(model.coinMovement(coin));
       boolean eraseCoin = model.coinCollision(coin, bird);
       // It shouldnt sound when it leaves the screen
       if(eraseCoin || coin.getCenterX() < 0) {

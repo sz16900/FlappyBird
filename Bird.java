@@ -16,7 +16,7 @@ public class Bird {
   private ImagePattern ip;
 
   Bird(int H, int W) {
-    img = new Image("birdFrame0.png");
+    img = new Image("bird.png");
     if (img != null) {
       ip = new ImagePattern(img);
     } else {

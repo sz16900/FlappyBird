@@ -1,6 +1,8 @@
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Ellipse;
 import java.util.ArrayList;
+import java.util.*;
+
 
 public class FlappyBirdModel {
 
@@ -52,7 +54,7 @@ public class FlappyBirdModel {
     return false;
   }
 
-  public int coinMovement(Ellipse coin, Ellipse bird) {
+  public int coinMovement(Ellipse coin) {
     int X = (int)coin.getCenterX() - 3;
     return X;
   }
@@ -79,10 +81,6 @@ public class FlappyBirdModel {
     return (int)column.getX() - 5;
   }
 
-  public int columnReset(int columnX, int columnTicks) {
-    return (columnX + (columnTicks * 5));
-  }
-
   public int getScore() {
     this.score = this.score + 1;
     return this.score;
@@ -94,8 +92,67 @@ public class FlappyBirdModel {
   }
 
   public void test() {
-    Bird birdObject = new Bird(H, W);
-    Ellipse bird = birdObject.getBird();
+    // Tests the gravity of the bird
+    Ellipse bird = new Ellipse();
+    bird.setCenterY(200);
+    this.birdYmotion = 0;
+    assert(gravity(bird) == 200);
+    this.birdYmotion = 2;
+    assert(gravity(bird) == 204);
+    this.birdYmotion = 3;
+    assert(gravity(bird) == 203);
+
+    // Tests the jumping of the bird
+    assert(Jump() == -10);
+    this.birdYmotion = 0;
+    assert(Jump() == -10);
+
+    // Tests the collision of bird and column
+    Columns columnObject = new Columns(H, W, 2);
+    ArrayList<Rectangle> columns = columnObject.getColumns();
+    assert(collision(bird, columns) == false);
+    bird.setCenterY(-1);
+    assert(collision(bird, columns) == true);
+    bird.setCenterY(800);
+    assert(collision(bird, columns) == true);
+    bird.setCenterY(10);
+    bird.setCenterX(10);
+    columns.get(1).setX(10);
+    columns.get(1).setY(10);
+    assert(collision(bird, columns) == true);
+
+    // Tests the movement of the coin through the screen
+    Ellipse coin = new Ellipse();
+    coin.setCenterX(100);
+    assert(coinMovement(coin) == 97);
+    coin.setCenterX(0);
+    assert(coinMovement(coin) == -3);
+
+    // Tests the collision of bird and coin
+    coin.setCenterY(100);
+    coin.setCenterX(100);
+    bird.setCenterX(100);
+    bird.setCenterY(100);
+    assert(coinCollision(coin, bird) == true);
+    assert(this.score == 100);
+
+    // Tests the movement of the cloud
+    assert(cloudMove(10) == 8);
+
+    // Tests where the cloud shoud respawn (note that the second integer is the
+    // size of the image being rendered. I.e: a PNG)
+    assert(cloudRespawn(0, 50) == 850);
+
+    // Tests the movement of a column
+    Rectangle rec = new Rectangle();
+    rec.setX(100);
+    assert(columnMove(rec) == 95);
+
+    assert(getScore() == 101);
+
+    assert(getLevel() == 2);
+
+
   }
 
 }
