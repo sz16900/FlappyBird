@@ -154,16 +154,18 @@ public class FlappyBirdView extends Application  {
       boolean eraseCoin = model.coinCollision(coin, bird);
       // It shouldnt sound when it leaves the screen
       if(eraseCoin || coin.getCenterX() < 0) {
-        coinObject.coinPlay();
         root.getChildren().remove(coin);
         coinObject = new Coin(H, W);
         coin = coinObject.getCoin();
         root.getChildren().add(coin);
       }
+      // This is so that the coin only makes a sound when bird touches it
+      if(eraseCoin) {coinObject.coinPlay();}
     }
 
     private void updateCloud() {
       int X = (int)cloud.getX();
+      // Get the size of the PNG image
       int imgW = cloudObject.getImageWidth();
       X = model.cloudMove(X);
 
