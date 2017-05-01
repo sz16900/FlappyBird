@@ -10,13 +10,21 @@ import javafx.scene.media.Media;
 public class Bird {
 
   private Ellipse bird;
-  URL url;
-  MediaPlayer mp;
+  private URL url;
+  private MediaPlayer mp;
+  private Image img;
+  private ImagePattern ip;
 
   Bird(int H, int W) {
-    Image img = new Image("birdFrame0.png");
+    img = new Image("birdFrame0.png");
+    if (img != null) {
+      ip = new ImagePattern(img);
+    } else {
+        System.err.println("Couldn't find file: ");
+        // return null;
+    }
+
     // convert image into a pattern to be pasted onto the ellipse
-    ImagePattern ip = new ImagePattern(img);
     bird = new Ellipse();
     bird.setCenterX(W / 2 - 10);
     bird.setCenterY(H / 2 - 10);

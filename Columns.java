@@ -31,4 +31,15 @@ public class Columns {
     return columns;
   }
 
+  public void test() {
+    // Though we specify five columns, actually there are twice the elemnts in
+    // the array because the function addColumn adds two columns.
+    Columns columns = new Columns(H, W, 5);
+    assert(columns.getColumns().size() == 10);
+    Columns columns2 = new Columns(H, W, 10);
+    assert(columns2.getColumns().size() == 20);
+    Columns columns3 = new Columns(H, W, 30);
+    assert(columns3.getColumns().size() == 60);
+  }
+
 }

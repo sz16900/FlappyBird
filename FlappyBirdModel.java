@@ -93,4 +93,9 @@ public class FlappyBirdModel {
     return this.level;
   }
 
+  public void test() {
+    Bird birdObject = new Bird(H, W);
+    Ellipse bird = birdObject.getBird();
+  }
+
 }
