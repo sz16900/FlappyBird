@@ -9,13 +9,19 @@ import javafx.util.Duration;
 public class Coin {
 
   private Ellipse coin;
-  URL url;
-  MediaPlayer mp;
+  private URL url;
+  private MediaPlayer mp;
+  private Image img;
+  private ImagePattern ip;
+
 
   Coin(int H, int W) {
-    Image img = new Image("coin.png");
-    // convert image into a pattern to be pasted onto the ellipse
-    ImagePattern ip = new ImagePattern(img);
+    img = new Image("coin.png");
+    if (img != null) {
+      ip = new ImagePattern(img);
+    } else {
+        System.err.println("Couldn't find file: coin.png");
+    }
     coin = new Ellipse();
     // Always away from the bird
     coin.setCenterX(900);

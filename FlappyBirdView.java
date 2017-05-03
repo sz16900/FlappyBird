@@ -1,3 +1,7 @@
+// I would like to acknowledge the user MIKU:
+// http://sjbuzz.net/video/watch/vid01R83xtgbO2o4 for providing a comprehensive
+// tutorial on how to use JavaFX for this video game.
+
 import java.util.ArrayList;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
@@ -16,7 +20,7 @@ import javafx.event.*;
 
 public class FlappyBirdView extends Application  {
 
-  int W = 800, H = 700, columnSize = 5, X, columnTicks;
+  int W = 800, H = 700, columnSize = 5, X, columnTicks, tempColNum = 5;
   Scene scene;
   Group root = new Group();
   Ellipse bird = new Ellipse();
@@ -133,12 +137,17 @@ public class FlappyBirdView extends Application  {
           // If the array of columns is empty, double the array size.
           // This is to increse Level Difficulty
           if(columns.size() == 0) {
-            columnSize = columnSize * 2;
-            levelLabel.setText("Level:" + " " + str.toString(model.getLevel()));
+            nextLevel();
             resetColumns();
           }
         }
       }
+    }
+
+    private void nextLevel() {
+      int level = model.getLevel();
+      levelLabel.setText("Level:" + " " + str.toString(level));
+      columnSize = level * tempColNum;
     }
 
     private void updateScore() {
@@ -200,7 +209,7 @@ public class FlappyBirdView extends Application  {
   private void pressUP(KeyEvent event) {
     String code = event.getCode().toString();
     if(code == "UP") {
-      bird.setCenterY((int)bird.getCenterY() + this.model.Jump());
+      bird.setCenterY((int)bird.getCenterY() + this.model.jump());
     }
   }
 

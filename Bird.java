@@ -3,7 +3,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.image.Image;
 import javafx.scene.media.MediaPlayer;
 import java.net.*;
-import javafx.util.Duration;
+import javafx.util.*;
 import javafx.scene.media.Media;
 
 
@@ -20,8 +20,7 @@ public class Bird {
     if (img != null) {
       ip = new ImagePattern(img);
     } else {
-        System.err.println("Couldn't find file: ");
-        // return null;
+        System.err.println("Couldn't find file: bird.png");
     }
 
     // convert image into a pattern to be pasted onto the ellipse

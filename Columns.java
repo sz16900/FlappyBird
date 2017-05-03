@@ -1,3 +1,7 @@
+// I would like to acknowledge the user MIKU:
+// http://sjbuzz.net/video/watch/vid01R83xtgbO2o4 for providing a comprehensive
+// tutorial on how to use JavaFX for this video game. 
+
 import java.util.ArrayList;
 import javafx.scene.shape.Rectangle;
 

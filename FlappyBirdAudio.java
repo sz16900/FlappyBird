@@ -14,6 +14,9 @@ public class FlappyBirdAudio {
     mp = new MediaPlayer(new Media(url.toString()));
   }
 
+
+  // Courtesy of: https://docs.oracle.com/javafx/2/api/javafx/scene/media/
+                  //MediaPlayer.html#setOnEndOfMedia(java.lang.Runnable)
   public void backgroundPlay() {
     // This is to loop the audio until player quits the game
     mp.setOnEndOfMedia(new Runnable() {

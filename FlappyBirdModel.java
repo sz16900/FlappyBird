@@ -29,7 +29,7 @@ public class FlappyBirdModel {
     return this.birdYmotion + (int)bird.getCenterY();
   }
 
-  public int Jump() {
+  public int jump() {
     // Reset the ymotion so the jump is smooth
     if(this.birdYmotion > 0) {
       this.birdYmotion = 0;
@@ -103,9 +103,9 @@ public class FlappyBirdModel {
     assert(gravity(bird) == 203);
 
     // Tests the jumping of the bird
-    assert(Jump() == -10);
+    assert(jump() == -10);
     this.birdYmotion = 0;
-    assert(Jump() == -10);
+    assert(jump() == -10);
 
     // Tests the collision of bird and column
     Columns columnObject = new Columns(H, W, 2);
@@ -144,9 +144,9 @@ public class FlappyBirdModel {
     assert(cloudRespawn(0, 50) == 850);
 
     // Tests the movement of a column
-    Rectangle rec = new Rectangle();
-    rec.setX(100);
-    assert(columnMove(rec) == 95);
+    Rectangle rectangle = new Rectangle();
+    rectangle.setX(100);
+    assert(columnMove(rectangle) == 95);
 
     assert(getScore() == 101);
 
